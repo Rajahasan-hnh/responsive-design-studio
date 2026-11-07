@@ -72,6 +72,7 @@ export const addCategory = createServerFn({ method: "POST" })
   .inputValidator((input: { name: string; kind: TxType; color?: string }) => input)
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("categories").insert({
+      user_id: context.userId,
       name: data.name.trim(),
       kind: data.kind,
       color: data.color ?? "#1e3a5f",
@@ -93,6 +94,7 @@ export const addTransaction = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("transactions").insert({
+      user_id: context.userId,
       type: data.type,
       amount: data.amount,
       category_id: data.category_id,
@@ -161,6 +163,7 @@ export const upsertBudget = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("budgets").upsert(
       {
+        user_id: context.userId,
         category_id: data.category_id,
         monthly_limit: data.monthly_limit,
         month: data.month,
@@ -196,6 +199,7 @@ export const addGoal = createServerFn({ method: "POST" })
   .inputValidator((input: { name: string; target_amount: number; icon?: string }) => input)
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("savings_goals").insert({
+      user_id: context.userId,
       name: data.name.trim(),
       target_amount: data.target_amount,
       icon: data.icon ?? "target",

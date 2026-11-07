@@ -75,5 +75,5 @@ export function greetingForHour(hour: number): Greeting {
 export function firstNameOf(fullName: string): string {
   const name = fullName.trim();
   if (!name) return "friend";
-  return name.split(/\s+/)[0];
+  return name.split(/\s+/)[0] ?? name;
 }
