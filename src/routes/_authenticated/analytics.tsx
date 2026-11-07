@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMemo, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { CountUp } from "@/components/count-up";
 import { useQuery } from "@tanstack/react-query";
 import {
   Area,
@@ -235,7 +237,7 @@ function AnalyticsPage() {
         <StatCard
           label="Average daily spend (selected month)"
           tone="expense"
-          value={<CountUpInline value={avgDailyExpense} />}
+          value={<CountUp value={avgDailyExpense} format={(v) => formatPKR(v)} />}
           sub={avgDailyExpense > 0 ? "Per day, on average" : "No expenses recorded"}
         />
         <StatCard
@@ -249,7 +251,3 @@ function AnalyticsPage() {
   );
 }
 
-function CountUpInline({ value }: { value: number }) {
-  const { CountUp } = require("@/components/count-up") as typeof import("@/components/count-up");
-  return <CountUp value={value} format={(v) => formatPKR(v)} />;
-}
