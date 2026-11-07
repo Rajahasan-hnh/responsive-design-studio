@@ -29,7 +29,7 @@ export type Database = {
           id?: string
           month: string
           monthly_limit: number
-          user_id: string
+          user_id?: string
         }
         Update: {
           category_id?: string
@@ -71,7 +71,7 @@ export type Database = {
           id?: string
           kind: string
           name: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           color?: string
@@ -132,7 +132,7 @@ export type Database = {
           name: string
           saved_amount?: number
           target_amount: number
-          user_id: string
+          user_id?: string
         }
         Update: {
           created_at?: string
@@ -172,7 +172,7 @@ export type Database = {
           note?: string | null
           occurred_on?: string
           type: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           amount?: number

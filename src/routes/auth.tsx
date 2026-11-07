@@ -43,6 +43,7 @@ function SignInPage() {
       toast.error(friendlyAuthError(error.message));
       return;
     }
+    try { sessionStorage.removeItem("paisaflow-welcomed"); } catch {}
     navigate({ to: "/dashboard" });
   }
 
