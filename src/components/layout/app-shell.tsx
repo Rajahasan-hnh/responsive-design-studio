@@ -43,8 +43,10 @@ const MOBILE_NAV = [
 function initialsOf(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "?";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  const a = parts[0] ?? "";
+  const b = parts[parts.length - 1] ?? "";
+  if (parts.length === 1) return a.slice(0, 2).toUpperCase();
+  return ((a[0] ?? "") + (b[0] ?? "")).toUpperCase();
 }
 
 export function AppShell({ children }: { children: ReactNode }) {

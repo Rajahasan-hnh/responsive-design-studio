@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
 import { CountUp } from "@/components/count-up";
 import { useQuery } from "@tanstack/react-query";
 import {
