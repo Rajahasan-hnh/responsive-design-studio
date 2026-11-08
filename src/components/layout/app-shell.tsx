@@ -7,8 +7,10 @@ import {
   FileText,
   LayoutDashboard,
   LogOut,
+  CalendarDays,
   PiggyBank,
   Plus,
+  Search,
   TrendingDown,
   TrendingUp,
   User,
@@ -22,12 +24,14 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { WelcomeModal } from "@/components/layout/welcome-modal";
 import { TransactionDialog } from "@/components/transactions/transaction-dialog";
+import { GlobalSearch } from "@/components/search/global-search";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/income", label: "Income", icon: TrendingUp },
   { to: "/expenses", label: "Expenses", icon: TrendingDown },
+  { to: "/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/budgets", label: "Budgets", icon: Wallet },
   { to: "/savings", label: "Savings", icon: PiggyBank },
@@ -36,6 +40,7 @@ const NAV = [
 
 const MOBILE_NAV = [
   { to: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { to: "/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/analytics", label: "Insights", icon: BarChart3 },
   { to: "/budgets", label: "Budgets", icon: Wallet },
 ] as const;
@@ -55,6 +60,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const location = useLocation();
   const [profileOpen, setProfileOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const { data: profile } = useQuery({ queryKey: ["profile"], queryFn: () => getProfile() });
 
@@ -78,6 +84,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className="text-xl font-bold tracking-tight text-foreground">PaisaFlow</span>
         </Link>
 
+        <button
+          onClick={() => setSearchOpen(true)}
+          className="mb-4 flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+        >
+          <Search className="h-4 w-4" />
+          Search
+          <kbd className="ml-auto rounded border border-border bg-card px-1.5 text-[10px] font-semibold">Ctrl K</kbd>
+        </button>
         <nav className="flex flex-1 flex-col gap-1" aria-label="Main">
           {NAV.map((item) => (
             <Link
@@ -113,6 +127,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           </span>
           <span className="text-lg font-bold tracking-tight text-foreground">PaisaFlow</span>
         </Link>
+        <div className="flex items-center gap-2">
+        <button
+          onClick={() => setSearchOpen(true)}
+          aria-label="Search transactions"
+          className="grid h-9 w-9 cursor-pointer place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted active:scale-95"
+        >
+          <Search className="h-5 w-5" />
+        </button>
         <button
           onClick={() => setProfileOpen(true)}
           aria-label="Open profile"
@@ -120,6 +142,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         >
           {initialsOf(profile?.full_name ?? "")}
         </button>
+        </div>
       </header>
 
       {/* Page content */}
@@ -176,6 +199,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <ProfileSheet open={profileOpen} onOpenChange={setProfileOpen} onSignOut={handleSignOut} />
 
       <TransactionDialog open={addOpen} onOpenChange={setAddOpen} />
+      <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
 
       {profile ? <WelcomeModal fullName={profile.full_name} /> : null}
     </div>

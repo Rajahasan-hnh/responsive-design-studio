@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Copy, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,12 +15,14 @@ export function TransactionList({
   categories,
   onEdit,
   onDelete,
+  onDuplicate,
   emptyState,
 }: {
   transactions: Transaction[];
   categories: Category[];
   onEdit: (t: Transaction) => void;
   onDelete: (t: Transaction) => void;
+  onDuplicate?: (t: Transaction) => void;
   emptyState?: React.ReactNode;
 }) {
   const byId = new Map(categories.map((c) => [c.id, c]));
@@ -72,6 +74,11 @@ export function TransactionList({
                 <DropdownMenuItem onClick={() => onEdit(t)} className="cursor-pointer">
                   <Pencil className="h-4 w-4" /> Edit
                 </DropdownMenuItem>
+                {onDuplicate && (
+                  <DropdownMenuItem onClick={() => onDuplicate(t)} className="cursor-pointer">
+                    <Copy className="h-4 w-4" /> Duplicate
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   onClick={() => onDelete(t)}
                   className="cursor-pointer text-destructive focus:text-destructive"

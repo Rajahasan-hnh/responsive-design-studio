@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,7 +7,8 @@ import { EmptyState, PageHeader, SectionCard, StatCard } from "@/components/page
 import { TransactionList } from "@/components/transactions/transaction-list";
 import { TransactionDialog } from "@/components/transactions/transaction-dialog";
 import { CountUp } from "@/components/count-up";
-import { deleteTransaction, listCategories, listTransactions } from "@/lib/api";
+import { useTransactionActions } from "@/components/transactions/use-transaction-actions";
+import { listCategories, listTransactions } from "@/lib/api";
 import { formatPKR, monthEndOffset, monthStartOffset, currentMonthStart } from "@/lib/format";
 import type { Transaction, TxType } from "@/lib/types";
 
@@ -22,7 +22,6 @@ type Range = (typeof RANGES)[number]["value"];
 
 /** Shared ledger view used by the Income and Expenses pages. */
 export function LedgerPage({ type }: { type: TxType }) {
-  const queryClient = useQueryClient();
   const [range, setRange] = useState<Range>("this");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Transaction | null>(null);
@@ -56,14 +55,7 @@ export function LedgerPage({ type }: { type: TxType }) {
 
   const total = filtered.reduce((acc, t) => acc + Number(t.amount), 0);
 
-  const remove = useMutation({
-    mutationFn: async (t: Transaction) => deleteTransaction({ data: { id: t.id } }),
-    onSuccess: () => {
-      toast.success("Transaction deleted");
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-    },
-    onError: (err: Error) => toast.error(err.message),
-  });
+  const { remove: removeTx, duplicate } = useTransactionActions();
 
   const noun = type === "income" ? "Income" : "Expense";
   const plural = type === "income" ? "income entries" : "expenses";
@@ -144,7 +136,8 @@ export function LedgerPage({ type }: { type: TxType }) {
               setEditing(t);
               setDialogOpen(true);
             }}
-            onDelete={(t) => remove.mutate(t)}
+            onDelete={removeTx}
+            onDuplicate={duplicate}
             emptyState={
               <EmptyState
                 icon={<Plus className="h-5 w-5" />}
