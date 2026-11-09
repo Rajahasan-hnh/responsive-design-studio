@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/calendar")({
   validateSearch: (s: Record<string, unknown>): { date?: string } =>
-    typeof s.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? { date: s.date } : {},
+    typeof s["date"] === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s["date"]) ? { date: s["date"] } : {},
   head: () => ({
     meta: [
       { title: "Calendar — PaisaFlow" },
