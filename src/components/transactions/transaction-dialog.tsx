@@ -66,16 +66,27 @@ export function TransactionDialog({
         occurred_on: date,
         note: note || null,
       };
+      // Show the change on screen immediately, then confirm with the server.
+      const row: Transaction = {
+        id: initial?.id ?? `temp-${Date.now()}`,
+        ...payload,
+      } as Transaction;
+      queryClient.setQueriesData<Transaction[]>({ queryKey: ["transactions"] }, (old) => {
+        if (!Array.isArray(old)) return old;
+        return initial ? old.map((x) => (x.id === initial.id ? row : x)) : [row, ...old];
+      });
+      onOpenChange(false);
       if (initial) await updateTransaction({ data: { id: initial.id, ...payload } });
       else await addTransaction({ data: payload });
     },
     onSuccess: () => {
       toast.success(initial ? "Transaction updated" : "Transaction added");
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      queryClient.invalidateQueries({ queryKey: ["budgets"] });
-      onOpenChange(false);
     },
     onError: (err: Error) => toast.error(err.message),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["budgets"] });
+    },
   });
 
   return (
