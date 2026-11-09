@@ -7,6 +7,7 @@ import {
   FileText,
   LayoutDashboard,
   LogOut,
+  Menu,
   CalendarDays,
   PiggyBank,
   Plus,
@@ -40,9 +41,16 @@ const NAV = [
 
 const MOBILE_NAV = [
   { to: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { to: "/income", label: "Income", icon: TrendingUp },
+  { to: "/expenses", label: "Expenses", icon: TrendingDown },
   { to: "/calendar", label: "Calendar", icon: CalendarDays },
-  { to: "/analytics", label: "Insights", icon: BarChart3 },
+] as const;
+
+const MORE_NAV = [
+  { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/budgets", label: "Budgets", icon: Wallet },
+  { to: "/savings", label: "Savings", icon: PiggyBank },
+  { to: "/reports", label: "Reports", icon: FileText },
 ] as const;
 
 function initialsOf(name: string): string {
@@ -61,6 +69,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const { data: profile } = useQuery({ queryKey: ["profile"], queryFn: () => getProfile() });
 
@@ -169,14 +178,58 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
         ))}
         <button
-          onClick={() => setProfileOpen(true)}
-          className="flex cursor-pointer flex-col items-center gap-1 py-2.5 text-[11px] font-semibold text-muted-foreground"
-          aria-label="Profile"
+          onClick={() => setMoreOpen(true)}
+          className={cn(
+            "flex cursor-pointer flex-col items-center gap-1 py-2.5 text-[11px] font-semibold",
+            MORE_NAV.some((m) => isActive(m.to)) ? "text-primary" : "text-muted-foreground",
+          )}
+          aria-label="More pages"
         >
-          <User className="h-5 w-5" />
-          Profile
+          <Menu className="h-5 w-5" />
+          More
         </button>
       </nav>
+
+      <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
+        <SheetContent side="bottom" className="rounded-t-3xl bg-card p-5 pb-8">
+          <SheetHeader className="p-0 text-left">
+            <SheetTitle className="text-lg font-bold tracking-tight">More</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4 grid grid-cols-3 gap-3">
+            {MORE_NAV.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                onClick={() => setMoreOpen(false)}
+                className={cn(
+                  "flex flex-col items-center gap-2 rounded-2xl border border-border p-4 text-xs font-semibold transition-colors active:scale-95",
+                  isActive(item.to) ? "bg-accent text-accent-foreground" : "text-foreground hover:bg-muted",
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.label}
+              </Link>
+            ))}
+            <button
+              onClick={() => {
+                setMoreOpen(false);
+                setProfileOpen(true);
+              }}
+              className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border border-border p-4 text-xs font-semibold text-foreground hover:bg-muted active:scale-95"
+            >
+              <User className="h-5 w-5" />
+              Profile
+            </button>
+            <button
+              onClick={handleSignOut}
+              className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border border-destructive/30 p-4 text-xs font-semibold text-destructive hover:bg-destructive/10 active:scale-95"
+            >
+              <LogOut className="h-5 w-5" />
+              Logout
+            </button>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <button
         onClick={() => setAddOpen(true)}
